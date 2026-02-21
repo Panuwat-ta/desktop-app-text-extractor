@@ -1,0 +1,111 @@
+{
+  "name": "text-extractor-app",
+  "version": "1.4.2",
+  "description": "Desktop app สำหรับดึงข้อความจากเอกสาร ภาพ และไฟล์อื่นๆ",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --enable-logging",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "electron",
+    "ocr",
+    "text extraction",
+    "pdf",
+    "tesseract"
+  ],
+  "author": "Panuwat-ta",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "pdf-parse": "^1.1.1",
+    "tesseract.js": "^5.0.4"
+  },
+  "build": {
+    "appId": "com.textextractor.app",
+    "productName": "Text Extractor",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!node_modules/**/{test,__tests__,tests,powered-test,example,examples}",
+      "!node_modules/**/*.d.ts",
+      "!node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ],
+    "asarUnpack": [
+      "node_modules/tesseract.js/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "surya_server.py",
+        "to": "surya_server.py"
+      },
+      {
+        "from": "requirements.txt",
+        "to": "requirements.txt"
+      },
+      {
+        "from": "INSTALL_SURYA.bat",
+        "to": "INSTALL_SURYA.bat"
+      },
+      {
+        "from": "surya_models",
+        "to": "surya_models",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "favicon.ico",
+      "verifyUpdateCodeSignature": false,
+      "compression": "store"
+    },
+    "mac": {
+      "icon": "favicon.ico",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "icon": "favicon.ico",
+      "category": "Utility"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "favicon.ico",
+      "uninstallerIcon": "favicon.ico",
+      "installerHeaderIcon": "favicon.ico",
+      "deleteAppDataOnUninstall": false,
+      "menuCategory": true,
+      "runAfterFinish": true,
+      "artifactName": "${productName} Setup ${version}.${ext}",
+      "warningsAsErrors": false,
+      "differentialPackage": false,
+      "perMachine": true,
+      "useZip": true
+    }
+  }
+}

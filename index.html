@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:5000 http://127.0.0.1:5000 https://tessdata.projectnaptha.com; worker-src 'self' blob:;">
+  <title>Text Extractor</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="node_modules/tesseract.js/dist/tesseract.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="history-panel">
+      <h2 class="history-title">ประวัติ</h2>
+      <button type="button" class="btn btn-secondary btn-sm btn-block history-clear"
+        id="btnClearHistory">ล้างประวัติ</button>
+      <div class="history-list-wrap">
+        <ul class="history-list" id="historyList" aria-label="ประวัติการดึงข้อความ"></ul>
+      </div>
+    </aside>
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="app-title">Text Extractor</h1>
+        <button type="button" class="theme-toggle" id="themeToggle" title="สลับโหมดมืด/สว่าง">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+
+      <section class="sidebar-section">
+        <label class="section-label">OCR Engine</label>
+        <select class="language-select" id="ocrEngine">
+          <option value="surya" selected>Surya OCR (แม่นยำกว่า)</option>
+          <option value="tesseract">Tesseract (ในตัว)</option>
+        </select>
+      </section>
+
+      <section class="sidebar-section">
+        <label class="section-label">ภาษา OCR</label>
+        <select class="language-select" id="ocrLanguage">
+          <option value="tha+eng" selected>ไทย + English</option>
+          <option value="eng">English (โค้ด)</option>
+          <option value="tha">ไทยอย่างเดียว</option>
+        </select>
+        <label class="checkbox-label">
+          <input type="checkbox" id="enablePreprocess" checked>
+          <span>ปรับปรุงรูปอัตโนมัติ</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="codeMode">
+          <span>โหมดโค้ด (อักขระพิเศษ)</span>
+        </label>
+      </section>
+
+      <section class="sidebar-section">
+        <label class="section-label">ไฟล์</label>
+        <button type="button" class="btn btn-primary btn-block" id="btnOpen">
+          <span class="btn-icon">📂</span>
+          เปิดภาพ / PDF
+        </button>
+
+        <div class="image-preview-area" id="imagePreviewArea">
+          <div id="previewList" class="preview-list" hidden></div>
+          <span class="preview-placeholder" id="previewPlaceholder">วางรูปที่นี่</span>
+        </div>
+
+        <button type="button" class="btn btn-extract btn-block" id="btnExtract" disabled>
+          <span class="btn-icon" id="extractIcon">🔍</span>
+          <span id="extractText">ดึงข้อความจากรูป</span>
+        </button>
+
+        <p class="file-info" id="fileInfo">ยังไม่ได้เลือกไฟล์</p>
+        <p class="paste-hint">หรือวางรูปจากคลิปบอร์ด (Ctrl+V) — หลายรูปได้</p>
+      </section>
+
+      <section class="sidebar-section">
+        <label class="section-label">สถานะ</label>
+        <div class="status" id="status" aria-live="polite">พร้อม</div>
+      </section>
+
+      <section class="sidebar-section" id="deviceSection" hidden>
+        <label class="section-label">อุปกรณ์ประมวลผล</label>
+        <div class="device-info" id="deviceInfo">
+          <span class="device-icon" id="deviceIcon">💻</span>
+          <span class="device-text" id="deviceText">CPU</span>
+        </div>
+      </section>
+
+      <section class="sidebar-section">
+        <label class="section-label">ส่งออก</label>
+        <div class="export-buttons">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnCopy" disabled title="คัดลอกข้อความทั้งหมด">
+            <span class="btn-icon">📋</span>
+            คัดลอก
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnExport" disabled title="บันทึกเป็น .txt">
+            <span class="btn-icon">💾</span>
+            TXT
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnClear" title="ล้างผลลัพธ์">
+            ล้าง
+          </button>
+        </div>
+      </section>
+
+      <section class="sidebar-section">
+        <div class="ocr-tips">
+          <strong>� เคล็ดลับ OCR:</strong>
+          <ul>
+            <li><strong>Surya:</strong> แม่นยำกว่า</li>
+            <li><strong>Tesseract:</strong> เร็วกว่า</li>
+            <li>โค้ด: Surya + light theme</li>
+            <li>ครั้งแรกช้า (โหลด model)</li>
+          </ul>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <div class="panel results-panel" id="dropTarget">
+        <div class="panel-header">
+          <h2 class="panel-title">OCR Results</h2>
+          <div class="panel-actions">
+            <span class="result-count" id="resultCount"></span>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnCopyAll" disabled>Copy All</button>
+          </div>
+        </div>
+        <div class="result-content">
+          <div class="batch-images-wrap" id="batchImagesWrap" hidden>
+            <div class="batch-images-label">รูปที่วาง (ตามลำดับ)</div>
+            <div class="batch-images" id="batchImages"></div>
+          </div>
+          <textarea class="result-text" id="resultText" readonly
+            placeholder="ข้อความที่ดึงได้จะแสดงที่นี่..."></textarea>
+        </div>
+      </div>
+    </main>
+  </div>
+  <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf" multiple hidden>
+  
+  <!-- Image Lightbox -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button type="button" class="lightbox-close" id="lightboxClose" title="ปิด (ESC)">×</button>
+    <img class="lightbox-image" id="lightboxImage" alt="Preview">
+  </div>
+  
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">กำลังโหลดโมเดล AI...</div>
+  </div>
+  
+  <script src="renderer.js"></script>
+</body>
+
+</html>
