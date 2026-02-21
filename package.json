@@ -60,15 +60,6 @@
       {
         "from": "requirements.txt",
         "to": "requirements.txt"
-      },
-      {
-        "from": "INSTALL_SURYA.bat",
-        "to": "INSTALL_SURYA.bat"
-      },
-      {
-        "from": "surya_models",
-        "to": "surya_models",
-        "filter": ["**/*"]
       }
     ],
     "win": {
