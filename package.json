@@ -31,7 +31,7 @@
   },
   "build": {
     "appId": "com.textextractor.app",
-    "productName": "Text Extractor",
+    "productName": "Text-Extractor",
     "directories": {
       "output": "dist"
     },
@@ -93,7 +93,7 @@
       "deleteAppDataOnUninstall": false,
       "menuCategory": true,
       "runAfterFinish": true,
-      "artifactName": "${productName} Setup ${version}.${ext}",
+      "artifactName": "${productName}-Setup-${version}.${ext}",
       "warningsAsErrors": false,
       "differentialPackage": false,
       "perMachine": true,

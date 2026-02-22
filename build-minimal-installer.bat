@@ -5,7 +5,7 @@ echo ========================================
 echo.
 
 REM Kill processes
-taskkill /F /IM "Text Extractor.exe" 2>nul
+taskkill /F /IM "Text-Extractor.exe" 2>nul
 taskkill /F /IM "electron.exe" 2>nul
 timeout /t 2 /nobreak >nul
 
@@ -56,7 +56,7 @@ echo ========================================
 echo Build complete!
 echo ========================================
 echo.
-echo Installer: Text-Extractor Setup 1.4.2.exe
+echo Installer: Text-Extractor-Setup-1.4.2.exe
 echo.
 echo During installation, it will:
 echo 1. Install the application
