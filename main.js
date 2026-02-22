@@ -71,7 +71,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
-    title: 'Text Extractor',
+    title: 'Text-Extractor',
     show: false,
   });
 
@@ -124,7 +124,7 @@ function createWindow() {
       if (!store.get('trayNotificationShown')) {
         if (Notification.isSupported()) {
           const notification = new Notification({
-            title: 'Text Extractor',
+            title: 'Text-Extractor',
             body: 'แอปยังทำงานอยู่ในถาดระบบ คลิกขวาที่ไอคอนเพื่อเปิดหรือปิดแอป',
             icon: path.join(__dirname, 'favicon.ico')
           });
@@ -139,7 +139,7 @@ function createWindow() {
 app.whenReady().then(() => {
   // Set app user model ID for Windows notifications
   if (process.platform === 'win32') {
-    app.setAppUserModelId('Text Extractor');
+    app.setAppUserModelId('Text-Extractor');
   }
   
   createWindow();
@@ -147,7 +147,7 @@ app.whenReady().then(() => {
   
   // Log startup info
   console.log('='.repeat(60));
-  console.log('Text Extractor Starting...');
+  console.log('Text-Extractor Starting...');
   console.log('App version:', app.getVersion());
   console.log('Electron version:', process.versions.electron);
   console.log('Node version:', process.versions.node);
@@ -196,12 +196,12 @@ function createTray() {
   const trayIcon = nativeImage.createFromPath(iconPath);
   
   tray = new Tray(trayIcon.resize({ width: 16, height: 16 }));
-  tray.setToolTip('Text Extractor');
+  tray.setToolTip('Text-Extractor');
   
   // Create context menu
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'เปิด Text Extractor',
+      label: 'เปิด Text-Extractor',
       click: () => {
         if (mainWindow) {
           mainWindow.show();
@@ -513,7 +513,7 @@ ipcMain.handle('surya:restart', async () => {
 ipcMain.handle('notification:show', async (_, options) => {
   if (Notification.isSupported()) {
     const notification = new Notification({
-      title: options.title || 'Text Extractor',
+      title: options.title || 'Text-Extractor',
       body: options.body || '',
       icon: path.join(__dirname, 'favicon.ico'),
       silent: options.silent || false,
