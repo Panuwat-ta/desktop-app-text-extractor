@@ -142,57 +142,130 @@ function hideLoadingOverlay() {
   }
 }
 
+function updateLoadingOverlayText(message, progress = null) {
+  const loadingText = document.getElementById('loadingText');
+  const loadingProgressFill = document.getElementById('loadingProgressFill');
+  
+  if (loadingText) {
+    loadingText.textContent = message;
+  }
+  
+  if (loadingProgressFill && progress !== null) {
+    loadingProgressFill.style.width = `${progress}%`;
+  }
+  
+  // Update step indicators based on progress
+  const steps = {
+    'step-init': { min: 0, max: 5, icon: '✅' },
+    'step-gpu': { min: 5, max: 15, icon: '✅' },
+    'step-detection': { min: 15, max: 50, icon: '✅' },
+    'step-recognition': { min: 50, max: 85, icon: '✅' },
+    'step-warmup': { min: 85, max: 100, icon: '✅' }
+  };
+  
+  if (progress !== null) {
+    Object.keys(steps).forEach(stepId => {
+      const step = document.getElementById(stepId);
+      const stepData = steps[stepId];
+      const icon = step?.querySelector('.loading-step-icon');
+      
+      if (step && icon) {
+        if (progress >= stepData.max) {
+          // Complete
+          step.classList.remove('active');
+          step.classList.add('complete');
+          icon.textContent = stepData.icon;
+        } else if (progress >= stepData.min && progress < stepData.max) {
+          // Active
+          step.classList.add('active');
+          step.classList.remove('complete');
+          icon.textContent = '⏳';
+        } else {
+          // Pending
+          step.classList.remove('active', 'complete');
+          icon.textContent = '⏳';
+        }
+      }
+    });
+  }
+}
+
 // Load history on startup
 loadHistory();
 
-// Loading overlay is already visible from HTML (no hidden attribute)
-// Initial check for Surya server - check every 2 seconds until ready
-const checkInterval = setInterval(() => {
-  console.log('Checking Surya server availability...');
-  checkSuryaServer().then(() => {
-    console.log('Check complete, suryaServerAvailable:', suryaServerAvailable);
-    updateSuryaUI();
+// Show loading overlay on startup - wait for Surya server to be ready
+console.log('🔄 Waiting for Surya OCR server to start...');
+showLoadingOverlay();
+updateLoadingOverlayText('กำลังเริ่มต้น Surya OCR...', 0);
+
+// Check for loading progress every 1 second - NO TIMEOUT, wait until ready
+const progressCheckInterval = setInterval(async () => {
+  try {
+    const response = await fetch('http://localhost:5000/progress', { 
+      method: 'GET',
+      signal: AbortSignal.timeout(2000)
+    });
     
-    // Stop checking and hide overlay when Surya is ready
-    if (suryaServerAvailable) {
-      console.log('✅ Surya OCR is ready! Stopping checks and hiding overlay.');
-      clearInterval(checkInterval);
-      hideLoadingOverlay();
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Loading progress:', data);
       
-      // Show notification when ready
-      if (window.electronAPI?.showNotification) {
-        window.electronAPI.showNotification({
-          title: 'Text Extractor พร้อมใช้งาน',
-          body: 'Surya OCR โหลดเสร็จแล้ว - พร้อมดึงข้อความจากรูปภาพ',
-          urgency: 'normal',
-          onClick: false
-        });
+      if (data.status === 'loading') {
+        // Show detailed progress message
+        updateLoadingOverlayText(data.message || 'กำลังโหลด...', data.progress);
+      } else if (data.status === 'ready') {
+        console.log('✅ Models loaded successfully!');
+        updateLoadingOverlayText('✅ พร้อมใช้งาน!', 100);
+        
+        // Wait 1 second to show completion message, then hide
+        setTimeout(() => {
+          hideLoadingOverlay();
+          clearInterval(progressCheckInterval);
+          suryaServerAvailable = true;
+          
+          // Update device info
+          if (data.device) {
+            window.suryaDeviceInfo = data.device;
+            updateDeviceUI(data.device);
+            const deviceText = getDeviceDisplayText(data.device);
+            setStatus(`Surya OCR พร้อมใช้งาน (${deviceText})`, 'success');
+          } else {
+            setStatus('Surya OCR พร้อมใช้งาน', 'success');
+          }
+          
+          // No notification needed - user already sees loading overlay disappear
+        }, 1000);
+      } else if (data.status === 'error') {
+        console.error('❌ Error loading models:', data.message);
+        updateLoadingOverlayText('❌ เกิดข้อผิดพลาด: ' + data.message);
+        
+        // Wait 3 seconds to show error message, then hide
+        setTimeout(() => {
+          hideLoadingOverlay();
+          clearInterval(progressCheckInterval);
+          setStatus('เกิดข้อผิดพลาดในการโหลด Surya OCR', 'error');
+          
+          // Show error notification
+          if (window.electronAPI?.showNotification) {
+            window.electronAPI.showNotification({
+              title: 'ไม่สามารถโหลด Surya OCR',
+              body: 'เกิดข้อผิดพลาด: ' + data.message,
+              urgency: 'critical',
+              onClick: false
+            });
+          }
+        }, 3000);
+      } else if (data.status === 'not_started') {
+        // Server is running but models not loaded yet
+        updateLoadingOverlayText('⏳ กำลังเริ่มต้นโหลดโมเดล AI...', 0);
       }
     }
-  }).catch((error) => {
-    console.error('Error checking Surya server:', error);
-  });
-}, 2000); // Check every 2 seconds
-
-// Fallback: hide overlay after 30 seconds even if Surya is not ready
-setTimeout(() => {
-  if (!suryaServerAvailable) {
-    console.log('⚠️ Timeout: Hiding overlay after 30 seconds');
-    clearInterval(checkInterval);
-    hideLoadingOverlay();
-    setStatus('Surya OCR ไม่พร้อมใช้งาน - กรุณาลองใหม่อีกครั้ง', 'error');
-    
-    // Show error notification
-    if (window.electronAPI?.showNotification) {
-      window.electronAPI.showNotification({
-        title: 'ไม่สามารถโหลด Surya OCR',
-        body: 'กรุณาลองเปิดแอพใหม่อีกครั้ง หรือใช้ Tesseract OCR แทน',
-        urgency: 'critical',
-        onClick: false
-      });
-    }
+  } catch (error) {
+    // Server not ready yet, keep checking
+    // Show waiting message
+    updateLoadingOverlayText('⏳ รอ Surya OCR เริ่มทำงาน...', 0);
   }
-}, 30000);
+}, 1000); // Check every 1 second - NO TIMEOUT, will check forever until ready
 
 function updateSuryaUI() {
   // No warning banner anymore, just update status
@@ -343,11 +416,8 @@ async function suryaOCR(imageSource, langs = ['en']) {
   }
   
   try {
-    // Show loading overlay for first request (model loading)
-    const isFirstRequest = !suryaFirstRequestComplete;
-    if (isFirstRequest) {
-      showLoadingOverlay();
-    }
+    // Don't show loading overlay for OCR requests
+    // Loading overlay is only shown during initial model loading
     
     // Show device info in status
     const deviceText = window.suryaDeviceInfo ? getDeviceDisplayText(window.suryaDeviceInfo) : 'CPU';
@@ -379,16 +449,12 @@ async function suryaOCR(imageSource, langs = ['en']) {
       throw new Error(result.error || 'Unknown error');
     }
     
-    // Hide loading overlay after first successful request
-    if (isFirstRequest) {
-      suryaFirstRequestComplete = true;
-      hideLoadingOverlay();
-    }
+    // Mark first request as complete
+    suryaFirstRequestComplete = true;
     
     return result.text;
   } catch (error) {
     console.error('Surya OCR error:', error);
-    hideLoadingOverlay(); // Hide overlay on error
     throw error;
   }
 }

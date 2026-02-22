@@ -151,8 +151,37 @@
   
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">กำลังโหลดโมเดล AI...</div>
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div class="loading-text" id="loadingText">กำลังโหลดโมเดล AI...</div>
+      <div class="loading-details" id="loadingDetails">
+        <div class="loading-progress-bar">
+          <div class="loading-progress-fill" id="loadingProgressFill" style="width: 0%"></div>
+        </div>
+        <div class="loading-steps" id="loadingSteps">
+          <div class="loading-step" id="step-init">
+            <span class="loading-step-icon">⏳</span>
+            <span>เริ่มต้นระบบ</span>
+          </div>
+          <div class="loading-step" id="step-gpu">
+            <span class="loading-step-icon">⏳</span>
+            <span>ตรวจสอบ GPU/CPU</span>
+          </div>
+          <div class="loading-step" id="step-detection">
+            <span class="loading-step-icon">⏳</span>
+            <span>โหลด Detection Model</span>
+          </div>
+          <div class="loading-step" id="step-recognition">
+            <span class="loading-step-icon">⏳</span>
+            <span>โหลด Recognition Model</span>
+          </div>
+          <div class="loading-step" id="step-warmup">
+            <span class="loading-step-icon">⏳</span>
+            <span>Warmup Models</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   
   <script src="renderer.js"></script>

@@ -1,41 +1,7 @@
 node_modules/
-surya_models/
-__pycache__/
-*.pyc
-.DS_Store
 dist/
-build/
 dist-minimal/
-*.log
-
-# Electron builder
-out/
+surya_models/
 *.exe
-*.dmg
-*.AppImage
-*.deb
-*.rpm
-*.snap
-
-# NSIS installer
-installer/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-Thumbs.db
-desktop.ini
-
-# Python virtual environment
-venv/
-env/
-.venv/
-
-# Local config
-.env
-.env.local
+*.log
+.DS_Store

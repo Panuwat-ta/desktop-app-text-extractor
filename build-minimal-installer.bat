@@ -27,12 +27,11 @@ echo.
 echo [2/3] Creating minimal package...
 mkdir dist-minimal
 
-REM Copy built app
-xcopy "dist\win-unpacked\*.*" "dist-minimal\" /E /I /Y
+REM Copy built app (excluding surya_models)
+xcopy "dist\win-unpacked\*.*" "dist-minimal\" /E /I /Y /EXCLUDE:exclude-surya.txt
 
 REM Copy additional files
 copy "requirements.txt" "dist-minimal\"
-copy "INSTALL_SURYA.bat" "dist-minimal\"
 copy "surya_server.py" "dist-minimal\"
 
 echo.
