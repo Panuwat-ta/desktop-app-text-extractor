@@ -9,7 +9,8 @@ Desktop app สร้างด้วย Electron สำหรับดึงข�
 ### สำหรับผู้ใช้งานทั่วไป
 
 **Windows (แนะนำ)**
-- [📦 ดาวน์โหลด Text Extractor Setup.exe](https://github.com/Panuwat-ta/desktop-app-text-extractor/releases/latest/download/Text-Extractor-Setup-1.4.2)
+- [📦 ดาวน์โหลด Text Extractor Setup.exe](https://github.com/Panuwat-ta/desktop-app-text-extractor/releases/latest/download/Text-Extractor-Setup-1.4.2.exe
+)
 - ขนาดไฟล์: ~90 MB
 - รองรับ: Windows 10/11 (64-bit)
 - ติดตั้ง Python และ Surya OCR อัตโนมัติ
