@@ -9,8 +9,8 @@ Desktop app สร้างด้วย Electron สำหรับดึงข�
 ### สำหรับผู้ใช้งานทั่วไป
 
 **Windows (แนะนำ)**
-- [📦 ดาวน์โหลด Text Extractor Setup.exe](https://github.com/Panuwat-ta/desktop-app-text-extractor/releases/latest/download/Text.Extractor.Setup.1.4.2.exe)
-- ขนาดไฟล์: ~1 GB
+- [📦 ดาวน์โหลด Text Extractor Setup.exe](https://github.com/Panuwat-ta/desktop-app-text-extractor/releases/latest/download/Text-Extractor-Setup-v1.4.2.exe)
+- ขนาดไฟล์: ~90 MB
 - รองรับ: Windows 10/11 (64-bit)
 - ติดตั้ง Python และ Surya OCR อัตโนมัติ
 
@@ -85,25 +85,6 @@ Desktop app สร้างด้วย Electron สำหรับดึงข�
 - **Surya OCR** — OCR แบบแม่นยำ (Python)
 - **pdf-parse** — ดึงข้อความจาก PDF
 - **electron-store** — จัดการ settings และ window state
-
-## 📁 โครงสร้างโปรเจค
-
-- `main.js` — Electron main process
-- `renderer.js` — UI และ OCR logic
-- `surya_server.py` — Python Flask server สำหรับ Surya OCR
-- `index.html` — หน้า UI หลัก
-- `styles.css` — การออกแบบและธีม
-- `preload.js` — Bridge ระหว่าง main และ renderer
-- `package.json` — การตั้งค่าโปรเจคและ build
-- `installer-script.nsh` — NSIS script สำหรับติดตั้ง dependencies
-- `BUILD_GUIDE.md` — คู่มือการ build และแจกจ่าย
-- `CHANGELOG.md` — ประวัติการเปลี่ยนแปลง
-- `INSTALL_SURYA.bat` — Script ติดตั้ง Surya OCR
-- `check_gpu.py` — ตรวจสอบ GPU
-
-## 🤝 การมีส่วนร่วม
-
-Pull requests ยินดีต้อนรับ! สำหรับการเปลี่ยนแปลงใหญ่ กรุณาเปิด issue ก่อนเพื่อหารือ
 
 ## 📝 License
 
