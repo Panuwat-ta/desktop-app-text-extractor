@@ -56,7 +56,7 @@ echo ========================================
 echo Build complete!
 echo ========================================
 echo.
-echo Installer: Text Extractor Setup 1.4.2.exe
+echo Installer: Text-Extractor Setup 1.4.2.exe
 echo.
 echo During installation, it will:
 echo 1. Install the application

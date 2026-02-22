@@ -1,11 +1,11 @@
-; Minimal Inno Setup Script for Text Extractor
+; Minimal Inno Setup Script for Text-Extractor
 ; Downloads everything from internet during installation
 
-#define MyAppName "Text Extractor"
+#define MyAppName "Text-Extractor"
 #define MyAppVersion "1.4.2"
 #define MyAppPublisher "Panuwat-ta"
 #define MyAppURL "https://github.com/Panuwat-ta/desktop-app-text-extractor"
-#define MyAppExeName "Text Extractor.exe"
+#define MyAppExeName "Text-Extractor.exe"
 #define PythonVersion "3.11.8"
 #define PythonURL "https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.exe"
 
@@ -22,7 +22,7 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=LICENSE.txt
 OutputDir=.
-OutputBaseFilename=Text Extractor Setup {#MyAppVersion}
+OutputBaseFilename=Text-Extractor Setup {#MyAppVersion}
 SetupIconFile=favicon.ico
 Compression=lzma2/max
 SolidCompression=yes
@@ -345,7 +345,7 @@ begin
   AddInstallLogSeparator();
   AddInstallLog('');
   AddInstallLog('🎉 Installation completed successfully!');
-  AddInstallLog('   Text Extractor is ready to use');
+  AddInstallLog('   Text-Extractor is ready to use');
   AddInstallLog('   All dependencies installed');
   AddInstallLog('   AI models cached and ready');
   AddInstallLog('');
@@ -392,7 +392,7 @@ begin
   
   // Add header
   InstallLogMemo.Lines.Add('╔═══════════════════════════════════════════════════════════╗');
-  InstallLogMemo.Lines.Add('║         Text Extractor - Installation Log                 ║');
+  InstallLogMemo.Lines.Add('║         Text-Extractor - Installation Log                 ║');
   InstallLogMemo.Lines.Add('╚═══════════════════════════════════════════════════════════╝');
   InstallLogMemo.Lines.Add('');
   AddInstallLog('Installation started');
@@ -445,7 +445,7 @@ begin
       
       AddInstallLogSeparator();
       AddInstallLog('✓ All components installed successfully');
-      AddInstallLog('✓ Text Extractor is ready to use!');
+      AddInstallLog('✓ Text-Extractor is ready to use!');
       Sleep(2000);
     end;
   end;
